@@ -1,4 +1,4 @@
-classdef objeto
+classdef objeto < handle
     properties
         x
     end
