@@ -2,8 +2,11 @@
 % y no por copia.
 classdef Red < handle
     properties
-        numCapas %número de capas
-        numNeuronas %neuronas por capa
+        numCapas %número total de capas
+        numCapasH %número de capas escondidas
+        numNeuronasH %neuronas en cada capa escondida
+        numNeuronasE %neuronas en la capa de entrada
+        numNeuronasS %neuronas en la capa de salida
         capas %vector de capas
         eta %velocidad de aprendizaje
         f = @(x) 1/(1 + exp(-x)); %función de salida
@@ -11,16 +14,22 @@ classdef Red < handle
     methods
         % Constructor. Define la cantidad de capas, neuronas por capa
         % y la velocidad de aprendizaje de la red.
-        function obj = Red(numeroCapas, neuronasPorCapa, velocidadAprendizaje)
+        function obj = Red(numeroCapas, velocidadAprendizaje, ...
+                neuronasEscondidas, neuronasEntrada, neuronasSalida)
             obj.numCapas = numeroCapas;
-            obj.numNeuronas = neuronasPorCapa;
+            obj.numNeuronasH = neuronasEscondidas;
+            obj.numNeuronasE = neuronasEntrada;
+            obj.numNeuronasS = neuronasSalida;
             obj.capas(numCapas) = obj.capas; %hack para reservar memoria
             
-            % TODO: Revisar bien los tamaños de la capa de entrada y la
-            % capa de salida.
-            for ii=1:numCapas
-                obj.capas(ii) = Capa(numNeuronas);
+            % TODO: Excepción si da negativo (?)
+            obj.numCapasH = numCapas - 2;
+            
+            obj.capas(1) = Capa(obj.numNeuronasE); %capa de entrada
+            for ii=2:obj.numCapas-1
+                obj.capas(ii) = Capa(obj.numNeuronasH); %capas escondidas
             end
+            obj.capas(obj.numCapas) = Capa(obj.numNeuronasS); %capa de salida
             obj.eta = velocidadAprendizaje;
         end
         
@@ -35,6 +44,11 @@ classdef Red < handle
             superior.salidas = red.f(superior.pesos * inferior.salidas);
         end
         
+        % Arnoldo
+        %function propagar_adelante(red, ...)
+        %        
+        %end
+        
         %% Métodos de propagación hacia atrás
         
         % Calcula el error entre la salida de la red y el valor esperado
@@ -44,5 +58,15 @@ classdef Red < handle
             red.capas(red.numCapas).errores = salidas .* (1 - salidas) ...
                 .* (objetivo - salidas);
         end
+        
+        % Arnoldo
+        %function propagar_error_atras(red, ...)
+        %        
+        %end
+        
+        % Arnoldo
+        %function ajustar_pesos(red, ...)
+        %        
+        %end
     end
 end
