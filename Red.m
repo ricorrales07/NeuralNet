@@ -45,7 +45,7 @@ classdef Red < handle
         end
         
         % Arnoldo
-        %function propagar_adelante(red, ...)
+        %function salidas = propagar_adelante(red, ...)
         %        
         %end
         
@@ -53,10 +53,11 @@ classdef Red < handle
         
         % Calcula el error entre la salida de la red y el valor esperado
         % para una entrada particular 
-        function calcular_error_salida(red, objetivo)
+        function error = calcular_error_salida(red, objetivo)
             salidas = red.capas(red.numCapas).salidas;
             red.capas(red.numCapas).errores = salidas .* (1 - salidas) ...
                 .* (objetivo - salidas);
+            error = 0.5 * sum((red.capas(red.numCapas).errores)^2);
         end
         
         % Arnoldo
@@ -68,5 +69,14 @@ classdef Red < handle
         %function ajustar_pesos(red, ...)
         %        
         %end
+        
+        function error = entrenarUnaEntrada(red, entrada, objetivo)
+            red.propagar_adelante(entrada);
+            error = red.calcular_error_salida(objetivo);
+            for ii = red.numCapas:-1:3
+                red.propagar_error_atras(red.capas(ii), red.capas(ii-1));
+            end
+            red.ajustar_pesos();
+        end
     end
 end
