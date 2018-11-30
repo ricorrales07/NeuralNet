@@ -15,11 +15,11 @@ classdef Red < handle
         % Constructor. Define la cantidad de capas, neuronas por capa
         % y la velocidad de aprendizaje de la red.
         function obj = Red(numeroCapas, velocidadAprendizaje, ...
-                neuronasEscondidas, neuronasEntrada, neuronasSalida)
+                numNeuronasEscondidas, numNeuronasEntrada, numNeuronasSalida)
             obj.numCapas = numeroCapas;
-            obj.numNeuronasH = neuronasEscondidas;
-            obj.numNeuronasE = neuronasEntrada;
-            obj.numNeuronasS = neuronasSalida;
+            obj.numNeuronasH = numNeuronasEscondidas;
+            obj.numNeuronasE = numNeuronasEntrada;
+            obj.numNeuronasS = numNeuronasSalida;
             obj.capas = Capa.empty(obj.numCapas, 0); %crea un arreglo vacío de nx1 capas
             
             % TODO: Excepción si da negativo (?)
