@@ -39,6 +39,8 @@ function entrenarRed(red, datosDeEntrenamiento, errorAceptable, batches)
         for jj=1:batches
             datos = load(strcat(datosDeEntrenamiento, 'data_batch_', ...
                 num2str(jj), '.mat'));
+            datos.data = double(datos.data);
+            datos.labels = double(datos.labels);
             n = size(datos.data, 1);
             for ii=1:n
                 entrada = datos.data(ii,:);

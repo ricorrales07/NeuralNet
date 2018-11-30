@@ -15,6 +15,8 @@ classdef Capa < handle
             obj.n = tamano;
             obj.salidas = zeros(tamano,1);
             obj.errores = zeros(tamano,1);
+            %FUCK, ESTO ESTÁ MAL
+            %Asumí que todas las capas eran del mismo tamaño...
             obj.pesos = rand(tamano); %TODO: revisar si los pesos son completamente random o deben estar entre 0 y 1
         end
     end

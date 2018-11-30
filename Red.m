@@ -48,8 +48,9 @@ classdef Red < handle
         function salidas = propagar_adelante(red, entradas)
             red.capas(1).salidas = entradas;
             for ii = 1:(red.numCapas-1)
-                red.capas(ii+1) = propagar_capa(red, red.capas(ii), ...
-                                                red.capas(ii+1));
+                %red.capas(ii+1) = red.propagar_capa(red.capas(ii), ...
+                %                                red.capas(ii+1));
+                red.propagar_capa(red.capas(ii), red.capas(ii+1));
             end
             salidas = red.capas(red.numCapas);
         end
