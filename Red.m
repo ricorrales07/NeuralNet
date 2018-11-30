@@ -9,7 +9,7 @@ classdef Red < handle
         numNeuronasS %neuronas en la capa de salida
         capas %vector de capas
         eta %velocidad de aprendizaje
-        f = @(x) 1/(1 + exp(-x)); %función de salida
+        f = @(x) 1 ./ (1 + exp(-x)); %función de salida
     end
     methods
         % Constructor. Define la cantidad de capas, neuronas por capa
@@ -26,7 +26,7 @@ classdef Red < handle
             obj.numCapasH = numCapas - 2;
             
             obj.capas(1) = Capa(obj.numNeuronasE); %capa de entrada
-            for ii=2:obj.numCapas-1
+            for ii = 2:(obj.numCapas-1)
                 obj.capas(ii) = Capa(obj.numNeuronasH); %capas escondidas
             end
             obj.capas(obj.numCapas) = Capa(obj.numNeuronasS); %capa de salida
@@ -44,10 +44,13 @@ classdef Red < handle
             superior.salidas = red.f(superior.pesos * inferior.salidas);
         end
         
-        % Arnoldo
-        %function salidas = propagar_adelante(red, ...)
-        %        
-        %end
+        % Propaga la señal hacia delante en toda la red
+        function propagar_adelante(red)
+            for ii = 1:(red.numCapas-1)
+                red.capas(ii+1) = propagar_capa(red, red.capas(ii), ...
+                                                red.capas(ii+1));
+            end
+        end
         
         %% Métodos de propagación hacia atrás
         
@@ -57,18 +60,23 @@ classdef Red < handle
             salidas = red.capas(red.numCapas).salidas;
             red.capas(red.numCapas).errores = salidas .* (1 - salidas) ...
                 .* (objetivo - salidas);
-            error = 0.5 * sum((red.capas(red.numCapas).errores)^2);
+            error = 0.5 * sum((red.capas(red.numCapas).errores)^2);         
         end
         
-        % Arnoldo
-        %function propagar_error_atras(red, ...)
-        %        
-        %end
+        % Propaga el error hacia atrás entre dos capas
+        function propagar_error_atras(red, inferior, superior)
+            inferior.errores = (superior.pesos * superior.errores) .* ...
+            inferior.salidas .* (1 - inferior.salidas);
+        end
         
-        % Arnoldo
-        %function ajustar_pesos(red, ...)
-        %        
-        %end
+        
+        function ajustar_pesos(red)
+            for ii = red.numCapas:-1:2 % Excepción de solo una capa en la 
+                                       % red
+                red.capas(ii).pesos = red.capas(ii).pesos + ...
+                    ( red.capas(ii).errores * red.capas(ii-1).entradas * red.eta);                   
+            end
+        end
         
         function error = entrenarUnaEntrada(red, entrada, objetivo)
             red.propagar_adelante(entrada);
