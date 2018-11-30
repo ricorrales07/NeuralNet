@@ -2,7 +2,7 @@
 
 red = Red(3, 0.1, 1000, 3072, 10);
 
-datos = 'C:\Users\Ricardo\Desktop\datasets_numerico\cifar-10-matlab.tar\cifar-10-matlab\cifar-10-batches-mat\');
+datos = 'C:\Users\Ricardo\Desktop\datasets_numerico\cifar-10-matlab.tar\cifar-10-matlab\cifar-10-batches-mat\';
 
 entrenarRed(red, datos, 0.01, 1);
 

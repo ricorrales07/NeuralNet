@@ -20,10 +20,10 @@ classdef Red < handle
             obj.numNeuronasH = neuronasEscondidas;
             obj.numNeuronasE = neuronasEntrada;
             obj.numNeuronasS = neuronasSalida;
-            obj.capas(numCapas) = obj.capas; %hack para reservar memoria
+            obj.capas = Capa.empty(obj.numCapas, 0); %crea un arreglo vacío de nx1 capas
             
             % TODO: Excepción si da negativo (?)
-            obj.numCapasH = numCapas - 2;
+            obj.numCapasH = obj.numCapas - 2;
             
             obj.capas(1) = Capa(obj.numNeuronasE); %capa de entrada
             for ii = 2:(obj.numCapas-1)
@@ -45,11 +45,13 @@ classdef Red < handle
         end
         
         % Propaga la señal hacia delante en toda la red
-        function propagar_adelante(red)
+        function salidas = propagar_adelante(red, entradas)
+            red.capas(1).salidas = entradas;
             for ii = 1:(red.numCapas-1)
                 red.capas(ii+1) = propagar_capa(red, red.capas(ii), ...
                                                 red.capas(ii+1));
             end
+            salidas = red.capas(red.numCapas);
         end
         
         %% Métodos de propagación hacia atrás
@@ -66,7 +68,7 @@ classdef Red < handle
         % Propaga el error hacia atrás entre dos capas
         function propagar_error_atras(red, inferior, superior)
             inferior.errores = (superior.pesos * superior.errores) .* ...
-            inferior.salidas .* (1 - inferior.salidas);
+                inferior.salidas .* (1 - inferior.salidas);
         end
         
         
