@@ -1,6 +1,6 @@
 % <>
 
-red = Red(3, 0.1, 1000, 3072, 10);
+red = Red(4, 0.1, 1000, 3072, 10);
 
 datos = 'C:\Users\Ricardo\Desktop\datasets_numerico\cifar-10-matlab.tar\cifar-10-matlab\cifar-10-batches-mat\';
 
@@ -20,8 +20,11 @@ categorias = ["avión";
     "camión"];
 
 s = input('Inserte número: ');
+I = eye(10);
 while num2str(s) ~= 'q'
-    x = red.propagar_adelante(double(datosDePrueba.data(s,:))')
+    x = red.propagar_adelante((double(datosDePrueba.data(s,:))' - 128) ./ 128)
+    error = 0.5 * sum((double(I(:,datosDePrueba.labels(s)+1)) - x).^2)
+    error2 = red.calcular_error_salida(double(I(:,datosDePrueba.labels(s)+1)))
     [~,salida] = max(x);
     im = reshape(datosDePrueba.data(s,:), 32,32,3);
     imshow(im);
@@ -45,7 +48,9 @@ function entrenarRed(red, datosDeEntrenamiento, errorAceptable, batches)
             datos.labels = double(datos.labels);
             n = size(datos.data, 1);
             for ii=1:n
-                entrada = datos.data(ii,:)';
+                % Se aplica esta transformación a los datos de entrada para
+                % obtener cosas entre -1 y 1.
+                entrada = (datos.data(ii,:)' - 128) ./ 128;
                 objetivo = I(:,datos.labels(ii)+1);
                 error = max(error, red.entrenarUnaEntrada(entrada, objetivo));
                 if mod(ii, 100) == 0

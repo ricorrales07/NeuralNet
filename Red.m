@@ -9,9 +9,7 @@ classdef Red < handle
         numNeuronasS %neuronas en la capa de salida
         capas %vector de capas
         eta %velocidad de aprendizaje
-        f = @(x) 1 ./ (1 + exp(-(x-128) ./ 128)); %función de salida
-        % Apliqué una transformación para lidiar mejor con datos de
-        % imágenes (números entre 0 y 255).
+        f = @(x) 1 ./ (1 + exp(-x)); %función de salida
     end
     methods
         % Constructor. Define la cantidad de capas, neuronas por capa
@@ -46,12 +44,14 @@ classdef Red < handle
         function propagar_capa(red, inferior, superior)
             %size(superior.pesos)
             %size(inferior.salidas)
+            %superior.pesos
             superior.salidas = red.f(superior.pesos * inferior.salidas);
+            %superior.salidas
         end
         
         % Propaga la señal hacia delante en toda la red
         function salidas = propagar_adelante(red, entradas)
-            red.capas(1).salidas = entradas;
+            red.capas(1).salidas = red.f(entradas);
             for ii = 1:(red.numCapas-1)
                 %fprintf('Propagando señal hacia adelante de capa %d a capa %d\n', ...
                 %    ii, ii+1);
@@ -70,7 +70,7 @@ classdef Red < handle
             salidas = red.capas(red.numCapas).salidas;
             red.capas(red.numCapas).errores = salidas .* (1 - salidas) ...
                 .* (objetivo - salidas);
-            error = 0.5 * sum((red.capas(red.numCapas).errores).^2);         
+            error = 0.5 * sum((salidas - objetivo).^2);         
         end
         
         % Propaga el error hacia atrás entre dos capas
