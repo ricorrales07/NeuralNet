@@ -36,6 +36,7 @@ function entrenarRed(red, datosDeEntrenamiento, errorAceptable, batches)
     error = Inf;
     while error >= errorAceptable
         error = 0;
+        k = 0;
         for jj=1:batches
             datos = load(strcat(datosDeEntrenamiento, 'data_batch_', ...
                 num2str(jj), '.mat'));
@@ -43,10 +44,15 @@ function entrenarRed(red, datosDeEntrenamiento, errorAceptable, batches)
             datos.labels = double(datos.labels);
             n = size(datos.data, 1);
             for ii=1:n
-                entrada = datos.data(ii,:);
+                entrada = datos.data(ii,:)';
                 objetivo = I(:,datos.labels(ii)+1);
                 error = max(error, red.entrenarUnaEntrada(entrada, objetivo));
             end
+            if mod(jj, 100) == 0
+                fprintf('Entrenando: %d imágenes de %d', jj, batches);
+            end
         end
+        k = k + 1;
+        fprintf('Iteración: %d, error: %f', k, error);
     end
 end

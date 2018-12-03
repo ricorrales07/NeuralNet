@@ -25,11 +25,12 @@ classdef Red < handle
             % TODO: Excepción si da negativo (?)
             obj.numCapasH = obj.numCapas - 2;
             
-            obj.capas(1) = Capa(obj.numNeuronasE); %capa de entrada
+            obj.capas(1) = Capa(obj.numNeuronasE, 0); %capa de entrada
             for ii = 2:(obj.numCapas-1)
-                obj.capas(ii) = Capa(obj.numNeuronasH); %capas escondidas
+                obj.capas(ii) = Capa(obj.numNeuronasH, obj.capas(ii-1).n); %capas escondidas
             end
-            obj.capas(obj.numCapas) = Capa(obj.numNeuronasS); %capa de salida
+            obj.capas(obj.numCapas) = Capa(obj.numNeuronasS, ...
+                obj.capas(obj.numCapas-1).n); %capa de salida
             obj.eta = velocidadAprendizaje;
         end
         
@@ -41,6 +42,8 @@ classdef Red < handle
         
         % Propaga la señal de una capa a la siguiente.
         function propagar_capa(red, inferior, superior)
+            %size(superior.pesos)
+            %size(inferior.salidas)
             superior.salidas = red.f(superior.pesos * inferior.salidas);
         end
         
@@ -48,6 +51,8 @@ classdef Red < handle
         function salidas = propagar_adelante(red, entradas)
             red.capas(1).salidas = entradas;
             for ii = 1:(red.numCapas-1)
+                %fprintf('Propagando señal hacia adelante de capa %d a capa %d\n', ...
+                %    ii, ii+1);
                 %red.capas(ii+1) = red.propagar_capa(red.capas(ii), ...
                 %                                red.capas(ii+1));
                 red.propagar_capa(red.capas(ii), red.capas(ii+1));
@@ -63,12 +68,12 @@ classdef Red < handle
             salidas = red.capas(red.numCapas).salidas;
             red.capas(red.numCapas).errores = salidas .* (1 - salidas) ...
                 .* (objetivo - salidas);
-            error = 0.5 * sum((red.capas(red.numCapas).errores)^2);         
+            error = 0.5 * sum((red.capas(red.numCapas).errores).^2);         
         end
         
         % Propaga el error hacia atrás entre dos capas
         function propagar_error_atras(red, inferior, superior)
-            inferior.errores = (superior.pesos * superior.errores) .* ...
+            inferior.errores = (superior.pesos' * superior.errores) .* ...
                 inferior.salidas .* (1 - inferior.salidas);
         end
         
@@ -77,15 +82,18 @@ classdef Red < handle
             for ii = red.numCapas:-1:2 % Excepción de solo una capa en la 
                                        % red
                 red.capas(ii).pesos = red.capas(ii).pesos + ...
-                    ( red.capas(ii).errores * red.capas(ii-1).entradas * red.eta);                   
+                    ( red.eta * red.capas(ii).errores * red.capas(ii-1).salidas' ); 
+                % Puse el eta primero por eficiencia.
             end
         end
         
         function error = entrenarUnaEntrada(red, entrada, objetivo)
             red.propagar_adelante(entrada);
             error = red.calcular_error_salida(objetivo);
-            for ii = red.numCapas:-1:3
-                red.propagar_error_atras(red.capas(ii), red.capas(ii-1));
+            for ii = red.numCapas:-1:2
+                %fprintf('Propagando error hacia atrás de capa %d a capa %d\n', ...
+                %    ii, ii-1);
+                red.propagar_error_atras(red.capas(ii-1), red.capas(ii));
             end
             red.ajustar_pesos();
         end
