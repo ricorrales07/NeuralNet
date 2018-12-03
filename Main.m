@@ -35,9 +35,9 @@ end
 function entrenarRed(red, datosDeEntrenamiento, errorAceptable, batches)
     I = eye(10);
     error = Inf;
+    k = 0;
     while error >= errorAceptable
         error = 0;
-        k = 0;
         for jj=1:batches
             datos = load(strcat(datosDeEntrenamiento, 'data_batch_', ...
                 num2str(jj), '.mat'));
