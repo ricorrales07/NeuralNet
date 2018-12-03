@@ -9,7 +9,9 @@ classdef Red < handle
         numNeuronasS %neuronas en la capa de salida
         capas %vector de capas
         eta %velocidad de aprendizaje
-        f = @(x) 1 ./ (1 + exp(-x)); %función de salida
+        f = @(x) 1 ./ (1 + exp(-(x-128) ./ 128)); %función de salida
+        % Apliqué una transformación para lidiar mejor con datos de
+        % imágenes (números entre 0 y 255).
     end
     methods
         % Constructor. Define la cantidad de capas, neuronas por capa
@@ -57,7 +59,7 @@ classdef Red < handle
                 %                                red.capas(ii+1));
                 red.propagar_capa(red.capas(ii), red.capas(ii+1));
             end
-            salidas = red.capas(red.numCapas);
+            salidas = red.capas(red.numCapas).salidas;
         end
         
         %% Métodos de propagación hacia atrás

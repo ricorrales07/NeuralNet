@@ -6,26 +6,27 @@ datos = 'C:\Users\Ricardo\Desktop\datasets_numerico\cifar-10-matlab.tar\cifar-10
 
 entrenarRed(red, datos, 0.01, 1);
 
-datosDePrueba = load(strcat(datosDeEntrenamiento, 'test_batch.mat'));
+datosDePrueba = load(strcat(datos, 'test_batch.mat'));
 
-categorias = ['avión';
-    'carro';
-    'pájaro';
-    'gato';
-    'venado';
-    'perro';
-    'rana';
-    'caballo';
-    'barco';
-    'camión'];
+categorias = ["avión";
+    "carro";
+    "pájaro";
+    "gato";
+    "venado";
+    "perro";
+    "rana";
+    "caballo";
+    "barco";
+    "camión"];
 
-s = '';
-while s ~= 'q'
-    s = input('Inserte número:');
-    [~,salida] = max(red.propagar_adelante(datosDePrueba.data(s,:)));
+s = input('Inserte número: ');
+while num2str(s) ~= 'q'
+    x = red.propagar_adelante(double(datosDePrueba.data(s,:))')
+    [~,salida] = max(x);
     im = reshape(datosDePrueba.data(s,:), 32,32,3);
     imshow(im);
-    title(categorias(salida));
+    title(strcat("Esperado: ", categorias(datosDePrueba.labels(s)+1), "; Obtenido: ", categorias(salida)));
+    s = input('Inserte número: ');
 end
 
 % La idea es que datosDeEntrenamiento sea solo el nombre de la carpeta
@@ -47,12 +48,12 @@ function entrenarRed(red, datosDeEntrenamiento, errorAceptable, batches)
                 entrada = datos.data(ii,:)';
                 objetivo = I(:,datos.labels(ii)+1);
                 error = max(error, red.entrenarUnaEntrada(entrada, objetivo));
-            end
-            if mod(jj, 100) == 0
-                fprintf('Entrenando: %d imágenes de %d', jj, batches);
+                if mod(ii, 100) == 0
+                    fprintf('Entrenando: %d imágenes de 10000\n', ii);
+                end
             end
         end
         k = k + 1;
-        fprintf('Iteración: %d, error: %f', k, error);
+        fprintf('Iteración: %d, error: %f\n', k, error);
     end
 end
