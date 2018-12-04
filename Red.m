@@ -10,8 +10,6 @@ classdef Red < handle
         capas %vector de capas
         eta %velocidad de aprendizaje
         f = @(x) 1 ./ (1 + exp(-x)); %función de salida
-        %f = @(x) tanh(x);
-        %f = @(x) max(zeros(size(x)),x);
     end
     methods
         % Constructor. Define la cantidad de capas, neuronas por capa
@@ -44,12 +42,7 @@ classdef Red < handle
         
         % Propaga la señal de una capa a la siguiente.
         function propagar_capa(red, inferior, superior)
-            %size(superior.pesos)
-            %size(inferior.salidas)
-            %superior.pesos
-            %inferior.salidas
             superior.salidas = red.f(superior.pesos * inferior.salidas);
-            %superior.salidas
         end
         
         % Propaga la señal hacia delante en toda la red
@@ -57,18 +50,10 @@ classdef Red < handle
             red.capas(1).salidas(1) = 1;
             red.capas(1).salidas(2:end) = entradas;
             for ii = 1:(red.numCapas-1)
-                %fprintf('Propagando señal hacia adelante de capa %d a capa %d\n', ...
-                %    ii, ii+1);
-                %red.capas(ii+1) = red.propagar_capa(red.capas(ii), ...
-                %                                red.capas(ii+1));
                 red.propagar_capa(red.capas(ii), red.capas(ii+1));
                 if ii ~= red.numCapas-1
                     red.capas(ii+1).salidas(1) = 1;
                 end
-                %if ii == 1
-                    %red.capas(ii).salidas
-                    %red.capas(ii+1).salidas
-                %end
             end
             salidas = red.capas(red.numCapas).salidas;
         end
@@ -81,10 +66,6 @@ classdef Red < handle
             salidas = red.capas(red.numCapas).salidas;
             red.capas(red.numCapas).errores = salidas .* (1 - salidas) ...
                 .* (objetivo - salidas);
-            salidas = (salidas > 0.5);
-            %if salidas == objetivo
-            %    fprintf('lols\n')
-            %end
             error = 0.5 * sum((salidas - objetivo).^2);
         end
         
@@ -108,8 +89,6 @@ classdef Red < handle
             red.propagar_adelante(entrada);
             error = red.calcular_error_salida(objetivo);
             for ii = red.numCapas:-1:2
-                %fprintf('Propagando error hacia atrás de capa %d a capa %d\n', ...
-                %    ii, ii-1);
                 red.propagar_error_atras(red.capas(ii-1), red.capas(ii));
             end
             red.ajustar_pesos();

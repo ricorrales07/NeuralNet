@@ -1,10 +1,10 @@
 % <>
 
-red = Red(4, 0.1, 1000, 3072, 10);
+red = Red(4, 0.5, 1000, 3072, 10);
 
 datos = 'C:\Users\Ricardo\Desktop\datasets_numerico\cifar-10-matlab.tar\cifar-10-matlab\cifar-10-batches-mat\';
 
-entrenarRed(red, datos, 0.01, 1);
+entrenarRed(red, datos, 0.1, 1);
 
 datosDePrueba = load(strcat(datos, 'test_batch.mat'));
 
@@ -54,7 +54,7 @@ function entrenarRed(red, datosDeEntrenamiento, errorAceptable, batches)
                 objetivo = I(:,datos.labels(ii)+1);
                 error = max(error, red.entrenarUnaEntrada(entrada, objetivo));
                 if mod(ii, 100) == 0
-                    fprintf('Entrenando: %d imágenes de 10000\n', ii);
+                    fprintf('Entrenando: %d imágenes de 10000, error: %f\n', ii, error);
                 end
             end
         end
