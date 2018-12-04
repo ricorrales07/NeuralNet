@@ -66,6 +66,7 @@ classdef Red < handle
             salidas = red.capas(red.numCapas).salidas;
             red.capas(red.numCapas).errores = salidas .* (1 - salidas) ...
                 .* (objetivo - salidas);
+            salidas = (salidas > 0.5);
             error = 0.5 * sum((salidas - objetivo).^2);
         end
         
