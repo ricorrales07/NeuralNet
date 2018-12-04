@@ -17,7 +17,7 @@ classdef Capa < handle
             obj.n = tamanoCapaActual;
             obj.salidas = zeros(obj.n,1);
             obj.errores = zeros(obj.n,1);
-            obj.pesos = rand(obj.n, tamanoCapaAnterior); %TODO: revisar si los pesos son completamente random o deben estar entre 0 y 1
+            obj.pesos = rand(obj.n, tamanoCapaAnterior)-0.5; %TODO: revisar si los pesos son completamente random o deben estar entre 0 y 1
         end
     end
 end

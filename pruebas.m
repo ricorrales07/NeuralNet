@@ -1,19 +1,26 @@
-[a] = loadpickle('C:\Users\Ricardo\Desktop\datasets_numerico\cifar-10-matlab.tar\cifar-10-matlab\cifar-10-batches-mat\test_batch.mat')
+%XOR
 
+clc
+red = Red(3, 1e-3, 4, 2, 1);
 
-%y = objeto(1)
-%hola(y)
-%y
-function hola(y)
-    y.x = 0;
-end
+datosDeEntrenamiento = rand(100,3);
+datosDeEntrenamiento(:,1:2) = (datosDeEntrenamiento(:,1:2) > 0.5);
+datosDeEntrenamiento(:,3) = xor(datosDeEntrenamiento(:,1),datosDeEntrenamiento(:,2));
 
-function [a] = loadpickle(filename)
-    if ~exist(filename,'file')
-        error('%s is not a file',filename);
+error = Inf;
+jj = 0;
+while(error > 0.1 && red.eta ~= 0)
+    errorAnterior = error;
+    error = 0;
+    for ii = 1:100
+        entrada = datosDeEntrenamiento(ii,1:2)';
+        objetivo = datosDeEntrenamiento(ii,3);
+        error = max(error, red.entrenarUnaEntrada(entrada, objetivo));
     end
-    outname = [tempname() '.mat'];
-    pyscript = ['import cPickle as pickle;import sys;import scipy.io;file=open("' filename '","r");dat=pickle.load(file);file.close();scipy.io.savemat("' outname '",dat)'];
-    system(['LD_LIBRARY_PATH=/opt/intel/composer_xe_2013/mkl/lib/intel64:/opt/intel/composer_xe_2013/lib/intel64;python -c ''' pyscript '''']);
-    a = load(outname);
+    jj = jj + 1;
+    fprintf("Fin de la iteración %d, error: %.8f\n", jj, error);
+    if error >= errorAnterior %si el error comienza a subir, bajamos el factor de aprendizaje
+        red.eta = red.eta * 0.1;
+        fprintf("Disminuyendo eta a %f\n", red.eta);
+    end
 end

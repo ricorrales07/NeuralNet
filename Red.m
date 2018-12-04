@@ -10,6 +10,8 @@ classdef Red < handle
         capas %vector de capas
         eta %velocidad de aprendizaje
         f = @(x) 1 ./ (1 + exp(-x)); %función de salida
+        %f = @(x) tanh(x);
+        %f = @(x) max(zeros(size(x)),x);
     end
     methods
         % Constructor. Define la cantidad de capas, neuronas por capa
@@ -17,8 +19,8 @@ classdef Red < handle
         function obj = Red(numeroCapas, velocidadAprendizaje, ...
                 numNeuronasEscondidas, numNeuronasEntrada, numNeuronasSalida)
             obj.numCapas = numeroCapas;
-            obj.numNeuronasH = numNeuronasEscondidas;
-            obj.numNeuronasE = numNeuronasEntrada;
+            obj.numNeuronasH = numNeuronasEscondidas + 1;
+            obj.numNeuronasE = numNeuronasEntrada + 1;
             obj.numNeuronasS = numNeuronasSalida;
             obj.capas = Capa.empty(obj.numCapas, 0); %crea un arreglo vacío de nx1 capas
             
@@ -45,19 +47,28 @@ classdef Red < handle
             %size(superior.pesos)
             %size(inferior.salidas)
             %superior.pesos
+            %inferior.salidas
             superior.salidas = red.f(superior.pesos * inferior.salidas);
             %superior.salidas
         end
         
         % Propaga la señal hacia delante en toda la red
         function salidas = propagar_adelante(red, entradas)
-            red.capas(1).salidas = red.f(entradas);
+            red.capas(1).salidas(1) = 1;
+            red.capas(1).salidas(2:end) = red.f(entradas);
             for ii = 1:(red.numCapas-1)
                 %fprintf('Propagando señal hacia adelante de capa %d a capa %d\n', ...
                 %    ii, ii+1);
                 %red.capas(ii+1) = red.propagar_capa(red.capas(ii), ...
                 %                                red.capas(ii+1));
                 red.propagar_capa(red.capas(ii), red.capas(ii+1));
+                if ii ~= red.numCapas-1
+                    red.capas(ii+1).salidas(1) = 1;
+                end
+                %if ii == 1
+                    %red.capas(ii).salidas
+                    %red.capas(ii+1).salidas
+                %end
             end
             salidas = red.capas(red.numCapas).salidas;
         end
@@ -70,7 +81,8 @@ classdef Red < handle
             salidas = red.capas(red.numCapas).salidas;
             red.capas(red.numCapas).errores = salidas .* (1 - salidas) ...
                 .* (objetivo - salidas);
-            error = 0.5 * sum((salidas - objetivo).^2);         
+            %salidas = (salidas > 0.5);
+            error = 0.5 * sum((salidas - objetivo).^2);
         end
         
         % Propaga el error hacia atrás entre dos capas
