@@ -55,7 +55,7 @@ classdef Red < handle
         % Propaga la señal hacia delante en toda la red
         function salidas = propagar_adelante(red, entradas)
             red.capas(1).salidas(1) = 1;
-            red.capas(1).salidas(2:end) = red.f(entradas);
+            red.capas(1).salidas(2:end) = entradas;
             for ii = 1:(red.numCapas-1)
                 %fprintf('Propagando señal hacia adelante de capa %d a capa %d\n', ...
                 %    ii, ii+1);
@@ -81,7 +81,10 @@ classdef Red < handle
             salidas = red.capas(red.numCapas).salidas;
             red.capas(red.numCapas).errores = salidas .* (1 - salidas) ...
                 .* (objetivo - salidas);
-            %salidas = (salidas > 0.5);
+            salidas = (salidas > 0.5);
+            %if salidas == objetivo
+            %    fprintf('lols\n')
+            %end
             error = 0.5 * sum((salidas - objetivo).^2);
         end
         
