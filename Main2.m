@@ -17,7 +17,7 @@ labelsPrueba = loadMNISTLabels(strcat(datos, 't10k-labels.idx1-ubyte'));
 
 %%
 
-evaluarErrorPrueba(red, imgsPrueba, labelsPrueba)
+evaluarErrorPrueba(red, imgsPrueba, labelsPrueba);
 
 s = input('Inserte número (1-6000): ');
 I = eye(10);
@@ -64,7 +64,7 @@ function imagenesConError = evaluarErrorPrueba(red, imgs, labels)
     I = eye(10);
     conError = 0; % porcentaje de imágenes erróneamente clasificadas
             
-    n = size(imgs, 1);
+    n = size(imgs, 2);
     for ii=1:n
         entrada = imgs(:,ii)';
         objetivo = I(:,labels(ii)+1);
@@ -79,7 +79,7 @@ function imagenesConError = evaluarErrorPrueba(red, imgs, labels)
                 ii, n);
         end
     end
-        
+    
     conError = conError / n;
     fprintf('Fin de pruebas. Porcentaje de error: %.2f\n', ...
         conError * 100);
