@@ -2,15 +2,16 @@
 % <>
 
 clc
-red = Red(4, 0.05, 100, 784, 10);
+red = Red(3, 0.05, 70, 784, 10);
 
-datos = 'C:\Users\Ricardo\Desktop\datasets_numerico\MNIST\';
+datos = "C:\Users\escan\OneDrive\Documentos\Grizzly\Analisis Numerico\NeuralNet\";
 
 imgsEntrenamiento = loadMNISTImages(strcat(datos, 'train-images.idx3-ubyte'))';
 labelsEntrenamiento = loadMNISTLabels(strcat(datos, 'train-labels.idx1-ubyte'));
 
 % 1% de error aceptable
-[errorPorEntrada, errorPorIteracion] = entrenarRed(red, imgsEntrenamiento, labelsEntrenamiento, 0.01);
+[errorPorEntrada, errorPorIteracion] = entrenarRed(red, imgsEntrenamiento, ...
+    labelsEntrenamiento, 0.01);
 
 imgsPrueba = loadMNISTImages(strcat(datos, 't10k-images.idx3-ubyte'));
 labelsPrueba = loadMNISTLabels(strcat(datos, 't10k-labels.idx1-ubyte'));
