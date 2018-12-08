@@ -76,7 +76,7 @@ classdef Red < handle
                 inferior.salidas .* (1 - inferior.salidas);
         end
         
-        
+        6
         function ajustar_pesos(red)
             for ii = red.numCapas:-1:2 % Excepción de solo una capa en la 
                                        % red

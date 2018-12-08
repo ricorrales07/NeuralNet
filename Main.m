@@ -3,7 +3,7 @@
 clc
 red = Red(4, 0.05, 1000, 3072, 10);
 
-datos = 'C:\Users\Ricardo\Desktop\datasets_numerico\cifar-10-matlab.tar\cifar-10-matlab\cifar-10-batches-mat\';
+datos = 'C:\Users\escan\OneDrive\Documentos\Grizzly\Analisis Numerico\NeuralNet\cifar-10-matlab.tar\cifar-10-matlab\cifar-10-batches-mat\';
 
 [mu, sigma] = obtenerNormalizacion(datos);
 
