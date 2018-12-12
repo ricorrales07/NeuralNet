@@ -11,6 +11,10 @@ datos = 'C:\Users\escan\OneDrive\Documentos\Grizzly\Analisis Numerico\NeuralNet\
 
 entrenarRed2(red, datos, 0.3, 5, mu, sigma);
 
+%%
+
+evaluarErrorPrueba(red, datos, mu, sigma)
+
 datosDePrueba = load(strcat(datos, 'test_batch.mat'));
 
 categorias = ["avión";
@@ -125,4 +129,33 @@ function [promedio, varianza] = obtenerNormalizacion(datosDeEntrenamiento)
     
     % Fórmula tomada de https://stats.stackexchange.com/questions/10441/how-to-calculate-the-variance-of-a-partition-of-variables
     varianza = (9999 / 49999) * sum(sigma + (40000 / 9999) * var(mu));
+end
+
+function imagenesConError = evaluarErrorPrueba(red, carpeta, mu, sigma)
+    I = eye(10);
+    conError = 0; % porcentaje de imágenes erróneamente clasificadas
+            
+    datos = load(strcat(carpeta, 'test_batch.mat'));
+    datos.data = double(datos.data);
+    datos.labels = double(datos.labels);
+    
+    n = size(datos.data, 1);
+    for ii=1:n
+        entrada = ((datos.data(ii,:) - mu) ./ sigma)';
+        objetivo = I(:,datos.labels(ii)+1);
+        red.propagar_adelante(entrada);
+        error1entrada = red.calcular_error_salida(objetivo);
+        if error1entrada > 0
+            conError = conError + 1;
+            imagenesConError(conError) = ii;
+        end
+        if mod(ii, 100) == 0
+            fprintf('Evaluando: %d imágenes de %d\n', ...
+                ii, n);
+        end
+    end
+    
+    conError = conError / n;
+    fprintf('Fin de pruebas. Porcentaje de error: %.2f\n', ...
+        conError * 100);
 end

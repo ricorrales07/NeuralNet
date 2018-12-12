@@ -20,6 +20,8 @@ labelsPrueba = loadMNISTLabels(strcat(datos, 't10k-labels.idx1-ubyte'));
 
 imgsConError = evaluarErrorPrueba(red, imgsPrueba, labelsPrueba);
 
+%%
+
 s = input('Inserte número (1-6000): ');
 I = eye(10);
 while s ~= -1
@@ -27,7 +29,7 @@ while s ~= -1
     errorRaw = 0.5 * sum((I(:,labelsPrueba(s)+1) - x).^2)
     errorPrediccion = red.calcular_error_salida(I(:,labelsPrueba(s)+1))
     [~,salida] = max(x);
-    im = reshape(imgsPrueba(:,s), 28, 28);
+    im = 1 - reshape(imgsPrueba(:,s), 28, 28);
     imshow(im);
     title(strcat("Esperado: ", num2str(labelsPrueba(s)), " Obtenido: ", num2str(salida-1)));
     s = input('Inserte número (1-6000): ');
