@@ -2,9 +2,9 @@
 % <>
 
 clc
-red = Red(3, 0.05, 70, 784, 10);
+red = Red(3, 0.05, 100, 784, 10);
 
-datos = "C:\Users\escan\OneDrive\Documentos\Grizzly\Analisis Numerico\NeuralNet\";
+datos = "C:\Users\Ricardo\Desktop\datasets_numerico\MNIST\";
 
 imgsEntrenamiento = loadMNISTImages(strcat(datos, 'train-images.idx3-ubyte'))';
 labelsEntrenamiento = loadMNISTLabels(strcat(datos, 'train-labels.idx1-ubyte'));
